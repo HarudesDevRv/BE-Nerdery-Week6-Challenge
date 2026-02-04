@@ -24,12 +24,13 @@ model Product {
   clientId    String   @map("client_id")
   client      Client   @relation(fields: [clientId], references: [id])
   name        String   @map("name")
-  description String?  @map("description")
+  description String?  @default("") @map("description")
   stock       Int      @default(0) @map("stock")
   price       Float    @map("price")
+  isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  
+
   @@unique([clientId, name])
   @@map("products")
 }
