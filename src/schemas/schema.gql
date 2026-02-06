@@ -1,0 +1,66 @@
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  stock: Int!
+  price: Float!
+  clientId: ID!
+  images: [Image!]!
+  isActive: Boolean
+  createdAt: String
+  updatedAt: String
+}
+
+type Image {
+  id: ID!
+  url: String!
+}
+
+type Query {
+  getProductById(id: ID!): Product
+}
+
+scalar Upload
+
+input ProductInput {
+  name: String!
+  description: String
+  stock: Int = 0
+  price: Float!
+}
+
+input ProductUpdateInput {
+  name: String
+  description: String
+  stock: Int
+  price: Float
+}
+
+input ProductImageInput {
+  file: Upload!
+}
+
+type ProductPayload {
+  errors: [String!]
+  product: Product
+}
+type ProductDeletePayload {
+  errors: [String!]
+  id: ID!
+}
+
+type ProductImagePayload {
+  errors: [String!]
+  image: Image
+}
+
+type Mutation {
+  createProduct(input: ProductInput!): ProductPayload!
+  updateProduct(productId: ID!, input: ProductUpdateInput): ProductPayload!
+  updateProductStatus(productId: ID!, status: Boolean!): ProductPayload!
+  deleteProduct(productId: ID!): ProductDeletePayload!
+  createProductImage(
+    productId: ID!
+    input: ProductImageInput
+  ): ProductImagePayload!
+}
