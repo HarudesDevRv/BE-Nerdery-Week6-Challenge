@@ -4,7 +4,7 @@ type Query {
 type Mutation {
   createProduct(input: ProductInput!): ProductPayload!
   updateProduct(productId: ID!, input: ProductUpdateInput): ProductPayload!
-  updateProductStatus(productId: ID!, status: Boolean!): ProductPayload!
+  updateProductStatus(productId: ID!, isActive: Boolean!): ProductPayload!
   deleteProduct(productId: ID!): ProductDeletePayload!
   createProductImage(
     productId: ID!

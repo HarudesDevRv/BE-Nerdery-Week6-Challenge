@@ -1,0 +1,312 @@
+{
+  "info": {
+    "_postman_id": "9e8bc9dc-8530-4ad2-bff5-cd1eac7babf9",
+    "name": "Module 6",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "5334091"
+  },
+  "item": [
+    {
+      "name": "Get API Keys",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "User-Agent",
+            "value": "insomnia/12.3.0"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:4000/api/key/3a5d3266-9852-4ea3-b4ea-0d93eaba4456",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "api",
+            "key",
+            "3a5d3266-9852-4ea3-b4ea-0d93eaba4456"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GraphQL",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "insomnia/12.3.0"
+          },
+          {
+            "key": "x-api-key",
+            "value": "api_key_clientA_1"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query ($productId: ID!) {\n  getProductById(id: $productId) {\n    id\n    name\n    price\n    stock\n    clientId\n\t\timages{\n\t\t\tid\n\t\t\turl\n\t\t}\n\t\tcreatedAt\n\t\tupdatedAt\n  }\n}",
+            "variables": "\"{\\n\\t\\\"productId\\\": \\\"08f133b3-9c5a-4736-8d93-6cae1a22121b\\\"\\n}\""
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GraphQL Create",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "insomnia/12.3.0"
+          },
+          {
+            "key": "x-api-key",
+            "value": "api_key_clientA_1"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation ($input: ProductInput!) {\n  createProduct(input: $input) {\n\t\terrors\n\t\tproduct{\n\t\t\tid\n\t\t\tclientId\n\t\t\tname\n\t\t\tdescription\n\t\t\tstock\n\t\t\tprice\n\t\t\tisActive\n\t\t\tcreatedAt\n\t\t\tupdatedAt\t\n\t\t\timages{\n\t\t\t\tid\n\t\t\t\turl\n\t\t\t}\t\t\n\t\t}\n  }\n}",
+            "variables": "\"{\\n\\t\\\"userId\\\": \\\"be1f29a6-f431-44aa-8024-4e4df2d3f939\\\",\\n\\t\\\"input\\\": {\\n\\t\\t\\\"name\\\": \\\"Testing product 21\\\",\\n\\t\\t\\\"price\\\": 19.99\\n\\t}\\n}\""
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GraphQL Update",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "insomnia/12.3.0"
+          },
+          {
+            "key": "x-api-key",
+            "value": "api_key_clientA_1"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation ($productId: ID!, $input: ProductUpdateInput!) {\n  updateProduct(productId: $productId, input: $input) {\n\t\terrors\n\t\tproduct{\n\t\t\tid\n\t\t\tclientId\n\t\t\tname\n\t\t\tdescription\n\t\t\tstock\n\t\t\tprice\n\t\t\tcreatedAt\n\t\t\tupdatedAt\t\n\t\t\timages{\n\t\t\t\tid\n\t\t\t\turl\n\t\t\t}\t\t\t\t\n\t\t}\n  }\n}",
+            "variables": "\"{\\n\\t\\\"productId\\\": \\\"08f133b3-9c5a-4736-8d93-6cae1a22121b\\\",\\n\\t\\\"input\\\": {\\n\\t\\t\\\"name\\\": \\\"Testing product 69\\\"\\n\\t}\\n}\""
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GraphQL Update Status",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "insomnia/12.3.0"
+          },
+          {
+            "key": "x-api-key",
+            "value": "api_key_clientA_1"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation ($productId: ID!, $status: Boolean!) {\n  updateProductStatus(productId: $productId, status: $status) {\n    errors\n    product {\n      id\n      clientId\n      name\n      description\n      stock\n      price\n      isActive\n      createdAt\n      updatedAt\n\t\t\timages{\n\t\t\t\tid\n\t\t\t\turl\n\t\t\t}\t\t\t\n    }\n  }\n}",
+            "variables": "\"{\\n\\t\\\"productId\\\": \\\"7000b044-fab7-4217-ba3f-cf84f8a073c1\\\",\\n\\t\\\"status\\\": false\\n}\""
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GraphQL Delete",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "insomnia/12.3.0"
+          },
+          {
+            "key": "x-api-key",
+            "value": "api_key_clientA_1"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation ($productId: ID!) {\n  deleteProduct(productId: $productId) {\n    errors\n    id\n  }\n}",
+            "variables": "\"{\\n\\t\\\"productId\\\": \\\"9cc2b43c-99a5-45f2-895d-0aca53e50741\\\"\\n}\""
+          }
+        },
+        "url": {
+          "raw": "http://localhost:4000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GraphQL Image Upload",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "multipart/form-data"
+          },
+          {
+            "key": "x-api-key",
+            "value": "api_key_clientA_1"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "operations",
+              "value": "{\"query\":\"mutation ($file: Upload!, $productId: ID!) { createProductImage(productId: $productId, input: {  file: $file }){errors image{ id url}} }\",\"variables\":{\"file\": null, \"productId\": \"08f133b3-9c5a-4736-8d93-6cae1a22121b\"}}"
+            },
+            {
+              "key": "map",
+              "value": "{\"0\":[\"variables.file\"]}"
+            },
+            {
+              "key": "0",
+              "type": "file",
+              "src": "C:\\Users\\luisf\\OneDrive\\Desktop\\1de98bcb-9a43-4881-b086-c4784e2090bd_ravn-og-image.avif"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:4000/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "graphql"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
