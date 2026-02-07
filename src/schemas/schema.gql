@@ -1,10 +1,24 @@
+type Query {
+  getProductById(id: ID!): Product
+}
+type Mutation {
+  createProduct(input: ProductInput!): ProductPayload!
+  updateProduct(productId: ID!, input: ProductUpdateInput): ProductPayload!
+  updateProductStatus(productId: ID!, status: Boolean!): ProductPayload!
+  deleteProduct(productId: ID!): ProductDeletePayload!
+  createProductImage(
+    productId: ID!
+    input: ProductImageInput
+  ): ProductImagePayload!
+}
+scalar Upload
+
 type Product {
   id: ID!
   name: String!
   description: String
   stock: Int!
   price: Float!
-  clientId: ID!
   images: [Image!]!
   isActive: Boolean
   createdAt: String
@@ -15,12 +29,6 @@ type Image {
   id: ID!
   url: String!
 }
-
-type Query {
-  getProductById(id: ID!): Product
-}
-
-scalar Upload
 
 input ProductInput {
   name: String!
@@ -52,15 +60,4 @@ type ProductDeletePayload {
 type ProductImagePayload {
   errors: [String!]
   image: Image
-}
-
-type Mutation {
-  createProduct(input: ProductInput!): ProductPayload!
-  updateProduct(productId: ID!, input: ProductUpdateInput): ProductPayload!
-  updateProductStatus(productId: ID!, status: Boolean!): ProductPayload!
-  deleteProduct(productId: ID!): ProductDeletePayload!
-  createProductImage(
-    productId: ID!
-    input: ProductImageInput
-  ): ProductImagePayload!
 }

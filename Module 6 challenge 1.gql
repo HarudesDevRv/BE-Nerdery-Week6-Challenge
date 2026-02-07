@@ -1,7 +1,60 @@
-"""
-string format "rrrr-mm-dd"
-"""
-scalar Date
+type Query {
+  products(category: String, first: Int, after: ID): PaginatedProducts!
+  productDetail(productId: ID!): Product!
+  productCategories: [Category!]!
+  me: User
+  userOrders(userId: ID!): [Order!]!
+  userCart(userId: ID!): Cart!
+}
+
+type Mutation {
+  authMutation: AuthMutation
+  me: User
+  productMutation: ProductMutation
+  orderMutation: OrderMutation
+}
+
+type ProductMutation {
+  productMutation: ProductMutation
+  productCreate(input: ProductInput!): ProductPayload!
+  productUpdate(productId: ID!, input: ProductInput!): ProductPayload!
+  productDelete(productId: ID!): ProductDeletePayload!
+  productImageCreate(
+    productId: ID!
+    input: ProductImageInput!
+  ): ProductImagePayload!
+  productImageUpdate(
+    productId: ID!
+    imageId: ID!
+    input: ProductImageInput!
+  ): ProductImagePayload!
+  productImageDelete(productId: ID!, imageId: ID!): ProductImageDeletePayload!
+  productLike(
+    userId: ID!
+    productId: ID!
+    input: ProductLikeInput
+  ): ProductLikePayload!
+}
+
+type OrderMutation {
+  orderCreate(userId: ID!, input: OrderInput!): OrderPayload!
+  cartProductCreate(userId: ID!, input: CartProductInput!): CartPayload!
+  cartUpdate(userId: ID!, input: CartInput!): CartPayload!
+  paymentCreate(order_id: ID!, input: PaymentInput!): PaymentPayload!
+}
+
+type AuthMutation {
+  signUp(input: SignUpInput!): SignUpPayload!
+  signIn(input: SignInInput): SignInPayload!
+  signOut(input: SignOutInput): SignOutPayload!
+  forgotPassword(input: ForgotPasswordInput): ForgotPasswordPayload!
+  resetPassword(input: ResetPasswordInput): ResetPasswordPayload!
+}
+
+type Subscription {
+  stockReduced(inventoryId: ID!): Inventory!
+}
+
 """
 string format "rrrr-mm-dd:hh-mm-ss"
 """
@@ -118,15 +171,6 @@ type PaginatedProducts {
   paginationData: PageInfo!
 }
 
-type Query {
-  products(category: String, first: Int, after: ID): PaginatedProducts!
-  productDetail(productId: ID!): Product!
-  categories: [Category!]!
-  me: User
-  userOrders(userId: ID!): [Order!]!
-  userCart(userId: ID!): Cart!
-}
-
 input ProductInventoryInput {
   storeId: ID!
   price: Float!
@@ -237,33 +281,6 @@ type PaymentPayload {
   payment: Payment
 }
 
-type Mutation {
-  authMutation: AuthMutation
-  me: User
-  productCreate(input: ProductInput!): ProductPayload!
-  productUpdate(productId: ID!, input: ProductInput!): ProductPayload!
-  productDelete(productId: ID!): ProductDeletePayload!
-  productImageCreate(
-    productId: ID!
-    input: ProductImageInput!
-  ): ProductImagePayload!
-  productImageUpdate(
-    productId: ID!
-    imageId: ID!
-    input: ProductImageInput!
-  ): ProductImagePayload!
-  productImageDelete(productId: ID!, imageId: ID!): ProductImageDeletePayload!
-  productLike(
-    userId: ID!
-    productId: ID!
-    input: ProductLikeInput
-  ): ProductLikePayload!
-  orderCreate(userId: ID!, input: OrderInput!): OrderPayload!
-  cartProductCreate(userId: ID!, input: CartProductInput!): CartPayload!
-  cartUpdate(userId: ID!, input: CartInput!): CartPayload!
-  paymentCreate(order_id: ID!, input: PaymentInput!): PaymentPayload!
-}
-
 input SignUpInput {
   email: String!
   password: String!
@@ -324,16 +341,4 @@ type ForgotPasswordPayload {
 type ResetPasswordPayload {
   errors: [UserError!]
   refreshToken: UserRefreshToken
-}
-
-type AuthMutation {
-  signUp(input: SignUpInput!): SignUpPayload!
-  signIn(input: SignInInput): SignInPayload!
-  signOut(input: SignOutInput): SignOutPayload!
-  forgotPassword(input: ForgotPasswordInput): ForgotPasswordPayload!
-  resetPassword(input: ResetPasswordInput): ResetPasswordPayload!
-}
-
-type Subscription {
-  stockReduced(inventoryId: ID!): Inventory!
 }
