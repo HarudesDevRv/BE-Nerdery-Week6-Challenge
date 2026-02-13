@@ -1,27 +1,6 @@
-type graphQlImage = {
-  id: string;
-  url: string;
-};
+import { FormattedProduct, GraphQlProduct } from "./product.types";
 
-type graphQlProduct = {
-  id: string;
-  clientId: string;
-  name: string;
-  description: string | null;
-  stock: number;
-  price: number;
-  images: graphQlImage[];
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type formattedProduct = Omit<graphQlProduct, "createdAt" | "updatedAt"> & {
-  createdAt: string;
-  updatedAt: string;
-};
-
-export function formatProduct(product: graphQlProduct): formattedProduct {
+export function formatProduct(product: GraphQlProduct): FormattedProduct {
   return {
     ...product,
     createdAt: product.createdAt.toISOString(),
