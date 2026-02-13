@@ -4,19 +4,20 @@ import { ApiKeyService } from "../services/api-key.service";
 import { validateDto } from "../utils/validations";
 import { readFileSync } from "fs";
 
-import { S3Client } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
-import path from "path";
 import { formatProduct } from "../utils/product-utilities";
 import { CreateProductDto } from "../dtos/products/create-product-dto";
 import { UpdateProductDto } from "../dtos/products/update-product-dto";
+import { ImageUploadService } from "../services/image-upload.service";
+import { FileUpload } from "graphql-upload/processRequest.mjs";
+import {
+  CreateProductInput,
+  GraphQlImage,
+  ProductPaginationInput,
+  UpdateProductInput,
+} from "../utils/product.types";
 
 // GraphQL typeDefs
 export const typeDefs = readFileSync("./src/schemas/schema.gql", "utf-8");
-
-const client = new S3Client({
-  region: process.env.AWS_BUCKET,
-});
 
 // Resolvers
 export const resolvers = {
@@ -39,9 +40,42 @@ export const resolvers = {
 
       return formatProduct(product);
     },
+    async getProducts(
+      _: any,
+      args: { pagination: ProductPaginationInput | undefined },
+      context: any,
+    ) {
+      const apiKey = context.apiKey;
+
+      if (!apiKey) {
+        throw new Error("Missing or invalid API key");
+      }
+
+      try {
+        const { products, pagination } = await ProductService.getByClient(
+          apiKey.clientId,
+          args.pagination,
+        );
+
+        return {
+          products: products.map(formatProduct),
+          pagination,
+        };
+      } catch (error) {
+        if (error instanceof Error) {
+          return { errors: [error.message], product: null };
+        } else {
+          throw Error("Internal server error");
+        }
+      }
+    },
   },
   Mutation: {
-    async createProduct(_: any, args: { input: any }, context: any) {
+    async createProduct(
+      _: any,
+      args: { input: CreateProductInput },
+      context: any,
+    ) {
       const apiKey = context.apiKey;
 
       if (!apiKey) {
@@ -68,7 +102,7 @@ export const resolvers = {
 
     async updateProduct(
       _: any,
-      args: { productId: string; input: any },
+      args: { productId: string; input: UpdateProductInput },
       context: any,
     ) {
       const apiKey = context.apiKey;
@@ -140,7 +174,7 @@ export const resolvers = {
         return { errors: null, id: product.id };
       } catch (error) {
         if (error instanceof Error) {
-          return { errors: [error.message], product: null };
+          return { errors: [error.message], id: null };
         } else {
           throw Error("Internal server error");
         }
@@ -149,7 +183,10 @@ export const resolvers = {
 
     async createProductImage(
       _: any,
-      args: { productId: string; input: { file: any } },
+      args: {
+        productId: string;
+        input: { file: { file: Promise<FileUpload> } };
+      },
       context: any,
     ) {
       const apiKey = context.apiKey;
@@ -158,42 +195,33 @@ export const resolvers = {
         throw new Error("Missing or invalid API key");
       }
 
+      let databaseImage: GraphQlImage | null = null;
+
       try {
-        const databaseImage = await ProductService.createImage(
+        databaseImage = await ProductService.createImage(
           apiKey.clientId,
           args.productId,
         );
 
-        const { createReadStream, filename, mimetype, encoding } =
-          await args.input.file.file;
+        const data = await ImageUploadService.uploadImage(
+          args.input.file.file,
+          `products/${args.productId}/images/${databaseImage.id}`,
+        );
 
-        const extension = path.extname(filename);
-        const stream = createReadStream();
-
-        const uploadParams = {
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `products/${args.productId}/images/${databaseImage.id + extension}`,
-          Body: stream,
-        };
-
-        const upload = new Upload({
-          client: client,
-          params: uploadParams,
-        });
-
-        const data = await upload.done();
         if (!data.Location) {
-          await ProductService.deleteFailedImage(databaseImage.id);
           throw new Error("Image upload failed");
         }
         const uploadedImage = await ProductService.setImageUrl(
           databaseImage.id,
           data.Location,
         );
-        return { errors: [], image: uploadedImage };
+        return { errors: null, image: uploadedImage };
       } catch (error) {
+        if (databaseImage?.id) {
+          await ProductService.deleteFailedImage(databaseImage.id);
+        }
         if (error instanceof Error) {
-          return { errors: [error.message], product: null };
+          return { errors: [error.message], image: null };
         } else {
           throw Error("Internal server error");
         }

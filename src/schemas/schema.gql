@@ -1,5 +1,6 @@
 type Query {
   getProductById(id: ID!): Product
+  getProducts(pagination: ProductPaginationInput): PaginatedProducts!
 }
 type Mutation {
   createProduct(input: ProductInput!): ProductPayload!
@@ -25,9 +26,25 @@ type Product {
   updatedAt: String
 }
 
+type PaginatedProducts {
+  products: [Product!]!
+  pagination: Pagination!
+}
+
 type Image {
   id: ID!
   url: String!
+}
+
+type Pagination {
+  page: Int!
+  limit: Int!
+  hasNext: Boolean!
+}
+
+input ProductPaginationInput {
+  page: Int
+  limit: Int
 }
 
 input ProductInput {
