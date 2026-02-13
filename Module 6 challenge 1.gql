@@ -1,0 +1,344 @@
+type Query {
+  products(category: String, first: Int, after: ID): PaginatedProducts!
+  productDetail(productId: ID!): Product!
+  productCategories: [Category!]!
+  me: User
+  userOrders(userId: ID!): [Order!]!
+  userCart(userId: ID!): Cart!
+}
+
+type Mutation {
+  authMutation: AuthMutation
+  me: User
+  productMutation: ProductMutation
+  orderMutation: OrderMutation
+}
+
+type ProductMutation {
+  productMutation: ProductMutation
+  productCreate(input: ProductInput!): ProductPayload!
+  productUpdate(productId: ID!, input: ProductInput!): ProductPayload!
+  productDelete(productId: ID!): ProductDeletePayload!
+  productImageCreate(
+    productId: ID!
+    input: ProductImageInput!
+  ): ProductImagePayload!
+  productImageUpdate(
+    productId: ID!
+    imageId: ID!
+    input: ProductImageInput!
+  ): ProductImagePayload!
+  productImageDelete(productId: ID!, imageId: ID!): ProductImageDeletePayload!
+  productLike(
+    userId: ID!
+    productId: ID!
+    input: ProductLikeInput
+  ): ProductLikePayload!
+}
+
+type OrderMutation {
+  orderCreate(userId: ID!, input: OrderInput!): OrderPayload!
+  cartProductCreate(userId: ID!, input: CartProductInput!): CartPayload!
+  cartUpdate(userId: ID!, input: CartInput!): CartPayload!
+  paymentCreate(order_id: ID!, input: PaymentInput!): PaymentPayload!
+}
+
+type AuthMutation {
+  signUp(input: SignUpInput!): SignUpPayload!
+  signIn(input: SignInInput): SignInPayload!
+  signOut(input: SignOutInput): SignOutPayload!
+  forgotPassword(input: ForgotPasswordInput): ForgotPasswordPayload!
+  resetPassword(input: ResetPasswordInput): ResetPasswordPayload!
+}
+
+type Subscription {
+  stockReduced(inventoryId: ID!): Inventory!
+}
+
+"""
+string format "rrrr-mm-dd:hh-mm-ss"
+"""
+scalar DateTime
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
+enum UserRole {
+  Client
+  Manager
+}
+
+type User {
+  userId: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PageInfo {
+  startCursor: ID
+  endCursor: ID
+  hasNextPage: Boolean!
+}
+
+type ImageUrl {
+  imageId: ID!
+  url: String!
+}
+
+type Inventory {
+  storeId: ID!
+  price: Float!
+  salePrice: Float!
+  stock: Int!
+  isActive: Boolean!
+}
+
+type Product {
+  productId: ID!
+  category: String!
+  brand: String!
+  name: String!
+  description: String!
+  imageUrls: [ImageUrl!]!
+  inventories: [Inventory!]!
+  isActive: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Category {
+  name: String!
+  description: String!
+  imageUrl: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type OrderProduct {
+  inventoryId: ID!
+  amount: Int!
+  price: Float!
+}
+
+type Order {
+  orderId: ID!
+  userId: ID!
+  total: Float!
+  currency: String!
+  products: [OrderProduct!]!
+  status: OrderStatus!
+  stripeUrl: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CartProduct {
+  cartId: ID!
+  inventoryId: ID!
+  amount: Int!
+}
+
+type Cart {
+  userId: ID!
+  items: [CartProduct!]!
+}
+
+type Payment {
+  orderId: ID!
+  stripeId: String!
+  amountSubtotal: Float!
+  amountTotal: Float!
+  currency: String!
+  paymentMethodTypes: [String!]!
+  paymentStatus: String!
+  status: String!
+}
+
+type UserError {
+  message: String!
+  code: String!
+}
+
+type PaginatedProducts {
+  message: String!
+  data: [Product!]!
+  paginationData: PageInfo!
+}
+
+input ProductInventoryInput {
+  storeId: ID!
+  price: Float!
+  salePrice: Float!
+  stock: Int!
+  isActive: Boolean!
+}
+
+input ProductInput {
+  categoryId: ID!
+  brandId: ID!
+  name: String!
+  description: String!
+  inventories: [ProductInventoryInput!]!
+  imageUrls: [String!]!
+  isActive: Boolean = True
+}
+
+input ProductImageInput {
+  imageUrl: String!
+}
+
+input ProductLikeInput {
+  value: Boolean = true
+}
+
+input OrderProductInput {
+  inventoryId: ID!
+  amount: Int!
+  price: Float!
+}
+
+input OrderInput {
+  userId: ID!
+  total: Float!
+  currency: String!
+  products: [OrderProductInput!]!
+  status: OrderStatus!
+}
+
+input CartProductInput {
+  inventoryId: ID!
+  amount: Int!
+}
+
+input CartInput {
+  products: [CartProductInput!]!
+}
+
+input PaymentInput {
+  stripeId: String
+  amountSubtotal: Float!
+  amountTotal: Float!
+  currency: String!
+  paymentMethodTypes: [String!]!
+  paymentStatus: String!
+  status: String!
+}
+
+type ProductPayload {
+  errors: [UserError!]
+  product: Product
+}
+
+type ProductImages {
+  productId: ID!
+  images: [ImageUrl!]!
+}
+
+type ProductImagePayload {
+  errors: [UserError!]
+  images: ProductImages
+}
+
+type ProductDeletePayload {
+  errors: [UserError!]
+  deletedProductId: ID
+}
+
+type ProductImageDeletePayload {
+  errors: [UserError!]
+  deletedImageId: ID
+}
+
+type ProductLikeStatus {
+  userId: ID!
+  productId: ID!
+  value: Boolean!
+}
+
+type ProductLikePayload {
+  errors: [UserError!]
+  productLikeStatus: ProductLikeStatus
+}
+
+type OrderPayload {
+  errors: [UserError!]
+  order: Order
+}
+
+type CartPayload {
+  errors: [UserError!]
+  cart: Cart
+}
+
+type PaymentPayload {
+  errors: [UserError!]
+  payment: Payment
+}
+
+input SignUpInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole! = Client
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+type UserRefreshToken {
+  refreshToken: String!
+  expiresAt: DateTime!
+}
+
+input SignOutInput {
+  email: String!
+  refreshToken: String!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+input ResetPasswordInput {
+  resetToken: String!
+  newPassword: String!
+}
+
+type UserResetPasswordToken {
+  resetToken: String!
+  expiresAt: DateTime!
+}
+
+type SignUpPayload {
+  errors: [UserError!]
+  refreshToken: UserRefreshToken
+}
+
+type SignInPayload {
+  errors: [UserError!]
+  refreshToken: UserRefreshToken
+}
+
+type SignOutPayload {
+  errors: [UserError!]
+  message: String
+}
+
+type ForgotPasswordPayload {
+  errors: [UserError!]
+  resetPasswordToken: UserResetPasswordToken
+}
+
+type ResetPasswordPayload {
+  errors: [UserError!]
+  refreshToken: UserRefreshToken
+}

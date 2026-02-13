@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "public"."clients" (
+CREATE TABLE "ecommerce2"."clients" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT,
@@ -10,7 +10,7 @@ CREATE TABLE "public"."clients" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."products" (
+CREATE TABLE "ecommerce2"."products" (
     "id" TEXT NOT NULL,
     "client_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE "public"."products" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."api_keys" (
+CREATE TABLE "ecommerce2"."api_keys" (
     "id" TEXT NOT NULL,
     "client_id" TEXT NOT NULL,
     "key" TEXT NOT NULL,
@@ -35,13 +35,16 @@ CREATE TABLE "public"."api_keys" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "clients_email_key" ON "public"."clients"("email");
+CREATE UNIQUE INDEX "clients_email_key" ON "ecommerce2"."clients"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "api_keys_key_key" ON "public"."api_keys"("key");
+CREATE UNIQUE INDEX "products_client_id_name_key" ON "ecommerce2"."products"("client_id", "name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "api_keys_key_key" ON "ecommerce2"."api_keys"("key");
 
 -- AddForeignKey
-ALTER TABLE "public"."products" ADD CONSTRAINT "products_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ecommerce2"."products" ADD CONSTRAINT "products_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "ecommerce2"."clients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."api_keys" ADD CONSTRAINT "api_keys_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ecommerce2"."api_keys" ADD CONSTRAINT "api_keys_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "ecommerce2"."clients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,0 +1,80 @@
+type Query {
+  getProductById(id: ID!): Product
+  getProducts(pagination: ProductPaginationInput): PaginatedProducts!
+}
+type Mutation {
+  createProduct(input: ProductInput!): ProductPayload!
+  updateProduct(productId: ID!, input: ProductUpdateInput): ProductPayload!
+  updateProductStatus(productId: ID!, isActive: Boolean!): ProductPayload!
+  deleteProduct(productId: ID!): ProductDeletePayload!
+  createProductImage(
+    productId: ID!
+    input: ProductImageInput
+  ): ProductImagePayload!
+}
+scalar Upload
+
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  stock: Int!
+  price: Float!
+  images: [Image!]!
+  isActive: Boolean
+  createdAt: String
+  updatedAt: String
+}
+
+type PaginatedProducts {
+  products: [Product!]!
+  pagination: Pagination!
+}
+
+type Image {
+  id: ID!
+  url: String!
+}
+
+type Pagination {
+  page: Int!
+  limit: Int!
+  hasNext: Boolean!
+}
+
+input ProductPaginationInput {
+  page: Int
+  limit: Int
+}
+
+input ProductInput {
+  name: String!
+  description: String
+  stock: Int = 0
+  price: Float!
+}
+
+input ProductUpdateInput {
+  name: String
+  description: String
+  stock: Int
+  price: Float
+}
+
+input ProductImageInput {
+  file: Upload!
+}
+
+type ProductPayload {
+  errors: [String!]
+  product: Product
+}
+type ProductDeletePayload {
+  errors: [String!]
+  id: ID!
+}
+
+type ProductImagePayload {
+  errors: [String!]
+  image: Image
+}
